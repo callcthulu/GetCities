@@ -1,4 +1,4 @@
-import pyodbc db
+import pyodbc as db
 
 class dbConnect:
 
@@ -17,7 +17,7 @@ class dbConnect:
                               'Trusted_Connection=yes;'
         """
         cursor = conn.cursor()
-        result = [row for row in cursor.execute(self.url)]
+        result = [row for row in cursor.execute(self.sql)]
         conn.close()
         return result
 
