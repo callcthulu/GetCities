@@ -105,7 +105,7 @@ def clearAddress(address):
 #Main program
 #Input: invoice, fullAdress
     #DBConnector:
-#addressList = dbc.dbConnect("C:\Users\oleli\Desktop\DA DT materiały\connectionString.txt","SELECT TOP 3 NumerFaktury, AdresKontrahentaJPK_FA FROM da.JPK_FA_VAT;").getAddressData()
+#addressList = dbc.dbConnect("C:\Users\oleli\Desktop\DA DT materiały\connectionString.txt","SELECT TOP 3 NumerFaktury, AdresKontrahentaJPK_FA FROM da.JPK_FA_VAT;").getData()
 #addressDF = pd.DataFrame(addressList, columns=["doc","address"])
     #FileConnector:
 #addressDF = pd.read_csv("test.txt",sep=",", index_col=0, header=0)
