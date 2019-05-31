@@ -1,6 +1,7 @@
 import pyodbc as db
 
-class dbConnect:
+
+class DBConnect:
 
     def __init__  (self, sql, path):
         self.sql = sql
@@ -8,7 +9,7 @@ class dbConnect:
             self.connString = file.read()
 
     def getData (self):
-        conn = pyodbc.connect(self.connString)
+        conn = db.connect(self.connString)
 
         """
                               'Driver={SQL Server};'

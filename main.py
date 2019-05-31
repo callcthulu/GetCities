@@ -1,28 +1,26 @@
 from geopy.geocoders import Nominatim
 import pycountry as pc
-import dbconnect as dbc
+#import DBConnect as dbc
 import re
 import pandas as pd
 
 """Main purpose: get city name, get country name by OpenMaps
-    Thinkgs done:
-        1. Get data from fb or csv file
-        2. Clean address a little bit
+    Things done:
+        1. Get data from DB, csv file, SQL Server
+        2. Clean address a little
         3. Get raw address from OpenMaps
         4. Optimise string with address if city and country not find
         5. Get postal code
-        6. Save data to file
-    To-do:
-        1. Get data from MSQL
-        2. Get back data to MSQL
+        6. Save data to file or return to SQL Server
     Additional targets:
-        1. Get longitude, latitude
+        1. Get longitude, latitude for exact address (street, building number)
         2. Use Bing service
         3. Save results to db dictionary [address, city, country, longitude, latitude]
 """
 
+"""                        Find country in input                        """
 def getCountry (address):
-    """Finding country in address"""
+    """Finding country in full input address"""
     addressWordList = address.upper().split(" ")
     for word in addressWordList[::-1]: #starting from the end, usualy name of coutry is one of the last elements of adress
         for country in pc.countries:
@@ -34,8 +32,9 @@ def getCountry (address):
     return None
 
 
+"""                      Find post code in input                        """
 def getPostalCode (address):
-    """Finding postal code in address"""
+    """Finding postal code in full input address"""
     address = address.split(" ")
     postalCode = ""
     for word in address[::-1]:
@@ -49,8 +48,10 @@ def getPostalCode (address):
     else:
         return None
 
+
+"""                        Find city in input                        """
 def getCity (address):
-    """Finding city in address"""
+    """Looks for city name in full input address"""
     city = ""
     postalCode = getPostalCode(address)
     if postalCode:
@@ -70,8 +71,10 @@ def geoDataFromBing(address):
     """TO-DO if needed"""
     pass
 
+
+"""                        Find city in results                        """
 def getCityFromNominatim(dic):
-    """get city from OpenMaps"""
+    """Looks for city name from data output from openMaps"""
     if "village" in dic:
         return dic.get("village")
     elif "city" in dic:
@@ -80,8 +83,10 @@ def getCityFromNominatim(dic):
         return dic.get("county")
     else: return None
 
-###Geolocator tests
+
+"""                      Geolocator (openMaps connector)                        """
 def geoDataFromAddress(address):
+    """connect to openMaps with full address, if no result cut the address to esential part and try again"""
     geolocator = Nominatim(user_agent="Tax_DA_test")
     location = geolocator.geocode(address, addressdetails = True)
     if location:
@@ -93,8 +98,10 @@ def geoDataFromAddress(address):
             return [location.raw.get("address").get("country_code"), getCityFromNominatim(location.raw.get("address"))]
     return [None, None]
 
-###Clear addresses
+
+"""                        Clear address                        """
 def clearAddress(address):
+    """First letter of every word big, every other letter small"""
     words = address.strip().split(" ")
     address = ""
     for word in words:
@@ -102,20 +109,26 @@ def clearAddress(address):
     return address
 
 
-#Main program
-#Input: invoice, fullAdress
-    #DBConnector:
+"""                        Main program                        """
+#####Input format: key, fullAdress
+    ###DBConnector:
 #addressList = dbc.dbConnect("C:\Users\oleli\Desktop\DA DT materiały\connectionString.txt","SELECT TOP 3 NumerFaktury, AdresKontrahentaJPK_FA FROM da.JPK_FA_VAT;").getData()
 #addressDF = pd.DataFrame(addressList, columns=["doc","address"])
-    #FileConnector:
+    ###FileConnector:
 #addressDF = pd.read_csv("test.txt",sep=",", index_col=0, header=0)
-    #PandasConnector:
+    ###PandasConnector:
 data = [["6002976","Ul. Wincentego Pola 1 31-532 Kraków Pl"]]
 addressDF = pd.DataFrame(data, columns=["doc","address"])
+    ###SQL Server connector
+#adressDF = SQL_in
+
 addressDF["address"] = addressDF["address"].apply(clearAddress)
 addressDF["country"], addressDF["city"] = zip(*addressDF["address"].apply(geoDataFromAddress))
 addressDF["postalCode"] = addressDF["address"].apply(getPostalCode)
-#Output: invoiceNo, fullAdress, country, city, postalCode
-    #OutputToFile:
+#####Output field list: key, fullAdress, country, city, postalCode
+    ###OutputToFile:
 #addressDF.to_csv("test.txt", sep=",")
+    ###Output to print
 print(addressDF)
+    ###Output to SQL Server
+#SQL_out = adressDF
