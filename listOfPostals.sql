@@ -1,0 +1,1 @@
+CREATE TABLE listOfPostals AS (house nvarchar(256), street nvarchar(256), city nvarchar(256), postalcode nvarchar(256), country nvarchar(256))INSERT INTO listOfPostals VALUES( '1', 'Rytownicza', 'Wrocław', '54-001', 'pl');INSERT INTO listOfPostals VALUES( '13', 'Wierna', 'Warszawa', '03-890', 'pl');INSERT INTO listOfPostals VALUES( '1', 'Lniana', 'Warszawa', '03-889', 'pl');

@@ -1,6 +1,6 @@
 from geopy.geocoders import Nominatim
 import pycountry as pc
-import dbconnect as dbc
+import dbConnect as dbc
 import re
 import pandas as pd
 
